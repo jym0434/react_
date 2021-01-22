@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import axios from 'axios';
-import Infinite from './Infinite';
+// import MovieList from './MovieList';
 import './../static/scss/Movie.scss'
 
 const Movie = () => {
@@ -8,18 +8,27 @@ const Movie = () => {
     let [movies, setMovies] = useState([]);
     let [url, setUrl] = useState('https://yts.mx/api/v2/list_movies.json?limit=20&order_by=asc&page=');
 
-    // 영화 리스트 불러오는 axios
-    useEffect(() =>{
-		async function axiosData(page){
-            await axios
+    const axiosInitMovieList = async () => {
+        await axios
             .get(url)
-            .then(( res ) => {
+            .then((res) => {
                 setMovies( res.data.data.movies );
+                setPage(page + 1);
             })
-        }
-        setPage(page + 1);
-        axiosData();
-    },[]);
+    }
+    useEffect(() => {
+        axiosInitMovieList();
+    }, [])
+
+
+    const axiosMoreMovieList = async () => {
+        console.log(page)
+        await axios
+            .get(url + page)
+            .then((res) => {
+                setMovies( movies.concat(res.data.data.movies) )
+            })
+    };
 
     const moveScroll = () => {
         const scrollHeight = document.documentElement.scrollHeight;
@@ -27,11 +36,9 @@ const Movie = () => {
         const clientHeight = document.documentElement.clientHeight;
         if (scrollTop + clientHeight >= scrollHeight) {
             setPage(page + 1);
-            console.log(page);
-            setUrl('https://yts.mx/api/v2/list_movies.json?limit=20&order_by=asc&page=' + page);
-            Infinite(page, url);
+            axiosMoreMovieList();
         }
-    }
+    };
 
     useEffect(() => {
         window.addEventListener('scroll', moveScroll);
@@ -42,18 +49,23 @@ const Movie = () => {
 
     return (
         <div className="movie_wrap">
-            {
-                movies.length !== 0 ?
-                movies.map((value, index) => {
-                    return (
-                        <div key={ index }>
-                            <p className="title">{ value.title }</p>
-                            <div className="imageBg"></div>
-                            <img src={ value.medium_cover_image } alt="" />
-                        </div>
-                    )
-                }) : <div></div>
-            }
+            {/* <Suspense fallback={<div> loading ... </div>}> */}
+                {/* <div> */}
+                    {
+                        movies.length !== 0 ?
+                        movies.map((value, index) => {
+                            return (
+                                <div key={ index }>
+                                    <p className="title">{ value.title }</p>
+                                    <div className="imageBg"></div>
+                                    <img src={ value.medium_cover_image } alt="" />
+                                </div>
+                            )
+                        }) : <div></div>
+                    }
+                {/* </div> */}
+                {/* <MovieList  />  */}
+            {/* </Suspense> */}
         </div>
     );
 }
