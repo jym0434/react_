@@ -7,7 +7,8 @@ const Header = () => {
         <div className="header">
             <ul>
                 <li><Link to="/">About</Link></li>
-                <li><Link to="/movie">Movie</Link></li>
+                <li><Link to="/movie/1">Movie</Link></li>
+                <li><Link to="/todoList">TodoList</Link></li>
             </ul>
         </div>
     )

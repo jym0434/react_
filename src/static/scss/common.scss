@@ -45,3 +45,29 @@ a {
     text-align: center;
     color: #FFFFFF;
 }
+
+.pagenation {
+    display: table;
+    margin: 50px auto 0;
+    text-align: center;
+    overflow: hidden;
+
+    > li {
+        float: left;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        
+        > a {
+            display: block;
+            padding: 10px 15px;
+            color: #FFFFFF;
+        }
+
+        &:hover {
+            > a {
+                color: green;
+            }
+        }
+    }
+}
